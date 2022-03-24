@@ -1,74 +1,43 @@
+let activeEffect: any
+const bucket = new Map() // 存放所有依赖的Map
+
 class ReactiveEffect {
   private _fn: any;
-  constructor(_fn: any) {
+  public scheduler: Function | undefined
+  deps: [] = []
+  active: boolean = true
+  onStop?: () => void
+
+  constructor(_fn: any, scheduler?: Function) {
     this._fn = _fn
+    this.scheduler = scheduler
   }
   run() {
     activeEffect = this
-    this._fn()
+    return this._fn()
   }
+
+  stop() {
+    if (this.active) {
+      cleanupEffect(this)
+      if (this.onStop) {
+        this.onStop()
+      }
+      this.active = false
+    }
+  }
+
+
 }
-// get 操作 => target => key => dep
-/*
-  结构
-  [target]
-      -> [key] 
-            -> [fn()]
-  ----------第一种情况----------
-  effect(function effectFn1() => {
-    user.age1
-  })
- 
-  effect(function effectFn2() => {
-    user.age1
-  })
- 
-  user
-    -> age1
-          -> effectFn1
-          -> effectFn2
- 
-  ----------第二种情况----------
-  effect(() => {
-    user.age1
-    user.age2
-  })
- 
-  结构
-  [target]
-      -> [key] 
-            -> [fn()]
- 
-  user
-    -> age1
-          -> effect
-    -> age2
-          -> effect
- 
-  ----------第三种情况----------
-  effect(function effectFn1() => {
-    user.age1
-  })
- 
-  effect(function effectFn2() => {
-    user.age2
-  })
- 
-  user
-    -> age1
-          -> effectFn1
-    -> age2
-          -> effectFn2
- 
- 
-  @params
-  target: 当前对象
-  key: 字段
-*/
 
+export function cleanupEffect(effect) {
+  effect.deps.forEach((dep: any) => {
+    dep.delete(effect)
+  });
+}
 
-const bucket = new Map() // 存放所有依赖的Map
 export function track(target: any, key: any) {
+  if (!activeEffect) return
 
   let depsMap = bucket.get(target) // 尝试从depsMap[Map]中获取depsMap[target] => user
   if (!depsMap) {
@@ -83,6 +52,8 @@ export function track(target: any, key: any) {
   }
   // 将fn加入到Set中
   deps.add(activeEffect)
+  // 反向收集
+  activeEffect.deps.push(deps)
 }
 
 export function trigger(target: any, key: any) {
@@ -95,13 +66,27 @@ export function trigger(target: any, key: any) {
   // 若存在，则取出对应的字段中依赖并执行
   let deps = depsMap.get(key)
   for (const effect of deps) {
-    effect.run()
+    if (effect.scheduler) {
+      effect.scheduler()
+    } else {
+      effect.run()
+    }
   }
 }
 
-
-let activeEffect: any
-export function effect(fn: any) {
-  const _effect = new ReactiveEffect(fn)
-  _effect.run()
+export function stop(runner) {
+  runner.effect.stop()
 }
+
+export function effect(fn: any, options: any = {}) {
+  const _effect = new ReactiveEffect(fn, options.scheduler)
+  _effect.onStop = options.onStop
+  _effect.run()
+
+  const runner: any = _effect.run.bind(_effect)
+  runner.effect = _effect
+
+  return runner
+}
+
+
