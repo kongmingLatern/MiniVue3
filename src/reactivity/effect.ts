@@ -1,4 +1,6 @@
+import { extend } from '../shared/index';
 let activeEffect: any
+let shouldTrack: any
 const bucket = new Map() // 存放所有依赖的Map
 
 class ReactiveEffect {
@@ -13,8 +15,19 @@ class ReactiveEffect {
     this.scheduler = scheduler
   }
   run() {
+    if (!this.active) {
+      return this._fn()
+    }
+
+    shouldTrack = true
     activeEffect = this
-    return this._fn()
+
+    const result = this._fn()
+
+    // reset
+    shouldTrack = false
+
+    return result
   }
 
   stop() {
@@ -34,11 +47,11 @@ export function cleanupEffect(effect) {
   effect.deps.forEach((dep: any) => {
     dep.delete(effect)
   });
+  effect.deps.length = 0
 }
 
 export function track(target: any, key: any) {
-  if (!activeEffect) return
-
+  if (!isTracking()) return
   let depsMap = bucket.get(target) // 尝试从depsMap[Map]中获取depsMap[target] => user
   if (!depsMap) {
     // 不存在，新建一个，然后设置对应字段
@@ -50,10 +63,17 @@ export function track(target: any, key: any) {
     // 若不存在，新建一个Set数据结构，不允许有重复函数
     depsMap.set(key, (deps = new Set()))
   }
+
+  // 已经在 dep 中
+  if (deps.has(activeEffect)) return
+
   // 将fn加入到Set中
   deps.add(activeEffect)
   // 反向收集
   activeEffect.deps.push(deps)
+}
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined
 }
 
 export function trigger(target: any, key: any) {
@@ -80,7 +100,7 @@ export function stop(runner) {
 
 export function effect(fn: any, options: any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler)
-  _effect.onStop = options.onStop
+  extend(_effect, options)
   _effect.run()
 
   const runner: any = _effect.run.bind(_effect)
