@@ -58,21 +58,28 @@ export function track(target: any, key: any) {
     bucket.set(target, (depsMap = new Map()))
   }
 
-  let deps = depsMap.get(key) // 尝试从user[Map]中获取user.key => fn()
-  if (!deps) {
+  let dep = depsMap.get(key) // 尝试从user[Map]中获取user.key => fn()
+  if (!dep) {
     // 若不存在，新建一个Set数据结构，不允许有重复函数
-    depsMap.set(key, (deps = new Set()))
+    depsMap.set(key, (dep = new Set()))
   }
 
+  trackEffects(dep)
+
+}
+
+export function trackEffects(dep: any) {
   // 已经在 dep 中
-  if (deps.has(activeEffect)) return
+  if (dep.has(activeEffect)) return
 
   // 将fn加入到Set中
-  deps.add(activeEffect)
+  dep.add(activeEffect)
+
   // 反向收集
-  activeEffect.deps.push(deps)
+  activeEffect.deps.push(dep)
 }
-function isTracking() {
+
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined
 }
 
@@ -84,15 +91,18 @@ export function trigger(target: any, key: any) {
     return
   }
   // 若存在，则取出对应的字段中依赖并执行
-  let deps = depsMap.get(key)
-  for (const effect of deps) {
+  let dep = depsMap.get(key)
+  triggerEffects(dep)
+}
+export function triggerEffects(dep) {
+  for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler()
     } else {
       effect.run()
     }
   }
-}
+};
 
 export function stop(runner) {
   runner.effect.stop()
@@ -108,5 +118,3 @@ export function effect(fn: any, options: any = {}) {
 
   return runner
 }
-
-
