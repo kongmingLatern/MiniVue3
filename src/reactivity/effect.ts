@@ -3,7 +3,7 @@ let activeEffect: any
 let shouldTrack: any
 const bucket = new Map() // 存放所有依赖的Map
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any;
   public scheduler: Function | undefined
   deps: [] = []
@@ -32,8 +32,10 @@ class ReactiveEffect {
 
   stop() {
     if (this.active) {
+      // 清除所有依赖
       cleanupEffect(this)
       if (this.onStop) {
+        // 有回调就执行回调
         this.onStop()
       }
       this.active = false
@@ -84,16 +86,18 @@ export function isTracking() {
 }
 
 export function trigger(target: any, key: any) {
-  // 取出 desMap 中的所有依赖
+  // 取出 desMap 中的所有的 target
   let depsMap = bucket.get(target)
-  if (!depsMap) {
-    // 若不存在依赖，直接返回
-    return
-  }
-  // 若存在，则取出对应的字段中依赖并执行
+  // if (!depsMap) {
+  //   // 若不存在依赖，直接返回
+  //   return
+  // }
+  // 若存在，则取出对应的字段中依赖并执行 user.key => fn()
   let dep = depsMap.get(key)
+  // 遍历所有依赖
   triggerEffects(dep)
 }
+
 export function triggerEffects(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {

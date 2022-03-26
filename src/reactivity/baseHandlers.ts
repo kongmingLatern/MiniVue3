@@ -9,7 +9,7 @@ const set = createSetter()
 const readonlyGet = createGetter(true)
 const shalldowReadonlyGet = createGetter(true, true)
 
-export function createGetter(isReadonly = false, isShallowReadonly = false) {
+export function createGetter(isReadonly = false, isShallowReadonly = false, isRef = false) {
   return function get(target, key) {
     // 判断 key 是否是 reactive 或 readonly
     if (key === ReactiveFlags.IS_REACTIVE) {
@@ -52,6 +52,7 @@ export const readonlyHandlers = {
     return true
   }
 }
+
 export const shalldowReadonlyHandlers = extend({}, readonlyHandlers, {
   get: shalldowReadonlyGet
 })
