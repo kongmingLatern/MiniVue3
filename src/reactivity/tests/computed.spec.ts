@@ -23,21 +23,21 @@ describe('computed', () => {
 
     const cValue = computed(getter)
 
-    // lazy
+    // lazy, 第一次不会进行调用,只是调用了 constructor
     expect(getter).not.toHaveBeenCalled()
-
+    // 在需要值的时候，才进行调用 (get value() => 拿到值)
     expect(cValue.value).toBe(1)
     expect(getter).toHaveBeenCalledTimes(1)
 
-    // should not compute again
+    // should not compute again，所以需要在 get value() 的实现中进行判断是否需要重新调用函数
     cValue.value
     expect(getter).toHaveBeenCalledTimes(1)
 
     // should not compute until needed
-    value.foo = 2
+    value.foo = 2 // 触发 trigger -> 遍历所有依赖 -> Scheduler[this._dirty = true]，注意，此时 this._value 还是之前的值
     expect(getter).toHaveBeenCalledTimes(1)
 
-    // now it should compute
+    // now it should compute，当需要值的时候，this._dirty = true -> 调用回调了，赋新的值了
     expect(cValue.value).toBe(2)
     expect(getter).toHaveBeenCalledTimes(2)
 

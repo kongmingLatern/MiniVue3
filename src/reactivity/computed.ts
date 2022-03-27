@@ -7,7 +7,9 @@ class ComputedRefImpl {
   private _effect: ReactiveEffect
   constructor(getter) {
     this._getter = getter
+    // 保存依赖
     this._effect = new ReactiveEffect(getter, () => {
+      // 回调 scheduler
       if (!this._dirty) {
         this._dirty = true
       }
@@ -19,7 +21,6 @@ class ComputedRefImpl {
     // effect
     if (this._dirty) {
       this._dirty = false
-      // 相当于执行一次 computed 的 回调
       this._value = this._effect.run()
     }
     return this._value

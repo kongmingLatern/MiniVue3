@@ -98,8 +98,8 @@ export function trigger(target: any, key: any) {
   triggerEffects(dep)
 }
 
-export function triggerEffects(dep) {
-  for (const effect of dep) {
+export function triggerEffects(deps: any) {
+  for (const effect of deps) {
     if (effect.scheduler) {
       effect.scheduler()
     } else {
