@@ -28,11 +28,12 @@ createApp {
 
 通过判断 ``vnode.type`` 类型来判断渲染的是一个 ``元素``还是一个``组件``
 ~~~ts
+// 组件 -> Object
 vnode.type = {
   mount(),
   render()
 }
-//或者
+//元素 -> string
 vnode.type = "div"
 ~~~
 
@@ -76,7 +77,7 @@ setup() {
 
 setupComponent()  // 设置属性
   => setupStatefulComponent() 
-      Component = instance.type
+      Component = instance.type // App{}
       // 取出 setup() 函数
       const { setup } = Component
 

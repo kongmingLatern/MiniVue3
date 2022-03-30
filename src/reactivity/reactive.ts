@@ -1,3 +1,4 @@
+import { isObject } from '../shared/index';
 import { mutableHandlers, readonlyHandlers, shalldowReadonlyHandlers } from './baseHandlers';
 
 export const enum ReactiveFlags {
@@ -7,16 +8,16 @@ export const enum ReactiveFlags {
 
 
 export function reactive(raw: any) {
-  return createActionObject(raw, mutableHandlers)
+  return createReactiveObject(raw, mutableHandlers)
 }
 
 export function readonly(raw: any) {
   // 修饰的变量无法被修改
-  return createActionObject(raw, readonlyHandlers)
+  return createReactiveObject(raw, readonlyHandlers)
 };
 
 export function shalldowReadonly(raw: any) {
-  return createActionObject(raw, shalldowReadonlyHandlers)
+  return createReactiveObject(raw, shalldowReadonlyHandlers)
 };
 
 export function isReactive(value: any) {
@@ -41,6 +42,10 @@ export function isProxy(value: any) {
 };
 
 
-function createActionObject(raw: any, baseHandlers) {
-  return new Proxy(raw, baseHandlers)
+function createReactiveObject(target: any, baseHandlers) {
+  if (!isObject(target)) {
+    console.warn(`target ${target} is not object!`);
+    return
+  }
+  return new Proxy(target, baseHandlers)
 }
