@@ -9,11 +9,13 @@ import { h } from '../../lib/guide-mini-vue.esm.js'
 
 export const Foo = {
   name: "Foo",
-  setup(props) {
+  setup(props, { emit }) {
     console.log(props);
-    props.count ++
+    props.count++
   },
   render() {
-    return h("div", {}, "foo, " + this.count)
+    const foo = h("p", {}, "foo")
+
+    return h("div", {}, [foo, btn1, btn2])
   }
 }

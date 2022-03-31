@@ -1,6 +1,6 @@
 import { createComponentInstance, setupComponent } from "./component"
-import { isObject } from '../shared/index';
 import { ShapeFlags } from "../shared/ShapeFlags";
+import { Fragment, Text } from './vnode'
 
 export function render(vnode, container) {
   // patch
@@ -10,15 +10,38 @@ export function render(vnode, container) {
 // patch 函数
 function patch(vnode, container) {
   // 处理组件
-  const { shapeFlag } = vnode
-  // Element 
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    processElement(vnode, container)
-    // STATEFUL_COMPONENT
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    processComponent(vnode, container)
-  }
+  const { shapeFlag, type } = vnode
+  switch (type) {
+    // Fragment
+    case Fragment:
+      processFlagment(vnode, container)
+      break;
+    // Text 文本
+    case Text:
+      processText(vnode, container)
+      break
 
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        processElement(vnode, container)
+        // STATEFUL_COMPONENT
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        processComponent(vnode, container)
+      }
+      break;
+  }
+}
+
+// 处理 Text 类型
+function processText(vnode: any, container: any) {
+  const { children } = vnode // string -> 文本
+  const textNode = (vnode.el = document.createTextNode(children))
+  container.append(textNode)
+}
+
+// 处理 Flagment 类型
+function processFlagment(vnode: any, container: any) {
+  mountChildren(vnode, container)
 }
 
 // 处理 Element 类型
@@ -105,6 +128,13 @@ function setupRenderEffect(instance: any, initialVNode: any, container: any) {
   // element -> mount
   initialVNode.el = subTree.el
 
+}
+
+
+function mountChildren(vnode: any, container: any) {
+  vnode.children.forEach(v => {
+    patch(v, container)
+  });
 }
 
 

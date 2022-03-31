@@ -1,14 +1,18 @@
 import { initProps } from './componentProps';
 import { PublicInstanceProxyHandlers } from './componentPublicInstance';
 import { shalldowReadonly } from '../reactivity/reactive';
+import { emit } from './componentEmit';
+import { initSlots } from './componentSlots';
 export function createComponentInstance(vnode: any) {
   const component = {
     vnode,
     type: vnode.type,
     setupState: {},
-    proxy: {}
+    slots: {},
+    emit: () => { }
   }
-
+  // bind(null, object) => 可以让用户在之后的传参过程中只传入一个值即可
+  component.emit = emit.bind(null, component) as any
   return component
 };
 
@@ -18,7 +22,7 @@ export function setupComponent(instance) {
   initProps(instance, instance.vnode.props)
 
   // 2.初始化 slots
-  // initSlots()
+  initSlots(instance, instance.vnode.children)
 
   // 3.调用 setup()
 
@@ -37,7 +41,9 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component
 
   if (setup) {
-    const setupResult = setup(shalldowReadonly(instance.props)) // setup() return 的值
+    const setupResult = setup(shalldowReadonly(instance.props), {
+      emit: instance.emit
+    }) // setup() return 的值
 
     handleSetupResult(instance, setupResult)
   }

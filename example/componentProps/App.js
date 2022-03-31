@@ -10,19 +10,22 @@ export const App = {
         id: "root",
         class: ["red", "fz-16"]
       },
-      // children -> array
-      [
-        h("p", { class: "fz-16" }, "hi"),
-        h("p", { class: "blue" }, "blue")
-      ]
+      [h("h1", {}, "hi, " + this.msg)],
     )
     // // children -> string
     // "hi, mini-vue " + this.src
-
+    // children -> array
+    // [
+    //   h("p", { class: "fz-16" }, "hi"),
+    //   h("p", { class: "blue" }, "blue")
+    // ]
     // )
   },
   setup() {
     // Composition API
-
+    return {
+      msg: "mini-vue",
+      src: "http://www.baidu.com"
+    }
   }
 }
