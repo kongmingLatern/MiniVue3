@@ -3,6 +3,9 @@ import { PublicInstanceProxyHandlers } from './componentPublicInstance';
 import { shalldowReadonly } from '../reactivity/reactive';
 import { emit } from './componentEmit';
 import { initSlots } from './componentSlots';
+
+let currentInstance: any = null// 当前组件实例
+
 export function createComponentInstance(vnode: any) {
   const component = {
     vnode,
@@ -16,7 +19,7 @@ export function createComponentInstance(vnode: any) {
   return component
 };
 
-export function setupComponent(instance) {
+export function setupComponent(instance: { vnode: any; type?: any; setupState?: {}; slots?: {}; emit?: () => void; }) {
   // TODO:
   // 1.初始化 props
   initProps(instance, instance.vnode.props)
@@ -41,10 +44,11 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component
 
   if (setup) {
+    setCurrentInstance(instance)
     const setupResult = setup(shalldowReadonly(instance.props), {
       emit: instance.emit
     }) // setup() return 的值
-
+    setCurrentInstance(null)
     handleSetupResult(instance, setupResult)
   }
 }
@@ -64,3 +68,10 @@ function finishComponentSetup(instance: any) {
 
 }
 
+export function getCurrentInstance() {
+  return currentInstance
+}
+
+function setCurrentInstance(instance: any) {
+  currentInstance = instance
+}

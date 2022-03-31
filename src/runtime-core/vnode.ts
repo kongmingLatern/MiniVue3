@@ -28,8 +28,8 @@ export function createVNode(type, props?, children?) {
   return vnode
 };
 
-export function createTextVNode(text: string) {
-  return createVNode(Text, {}, text)
+export function createTextVNode(text: string, props: any = {}) {
+  return createVNode(Text, props, text)
 };
 
 
