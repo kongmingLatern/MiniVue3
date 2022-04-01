@@ -4,17 +4,17 @@ import { Fragment, Text } from './vnode'
 
 export function render(vnode, container) {
   // patch
-  patch(vnode, container)
+  patch(vnode, container, null)
 };
 
 // patch 函数
-function patch(vnode, container) {
+function patch(vnode, container, parentComponent) {
   // 处理组件
   const { shapeFlag, type } = vnode
   switch (type) {
     // Fragment
     case Fragment:
-      processFlagment(vnode, container)
+      processFlagment(vnode, container, parentComponent)
       break;
     // Text 文本
     case Text:
@@ -23,10 +23,10 @@ function patch(vnode, container) {
 
     default:
       if (shapeFlag & ShapeFlags.ELEMENT) {
-        processElement(vnode, container)
+        processElement(vnode, container, parentComponent)
         // STATEFUL_COMPONENT
       } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-        processComponent(vnode, container)
+        processComponent(vnode, container, parentComponent)
       }
       break;
   }
@@ -40,17 +40,17 @@ function processText(vnode: any, container: any) {
 }
 
 // 处理 Flagment 类型
-function processFlagment(vnode: any, container: any) {
-  mountChildren(vnode, container)
+function processFlagment(vnode: any, container: any, parentComponent) {
+  mountChildren(vnode, container, parentComponent)
 }
 
 // 处理 Element 类型
-function processElement(vnode: any, container: any) {
-  mountElement(vnode, container)
+function processElement(vnode: any, container: any, parentComponent) {
+  mountElement(vnode, container, parentComponent)
 }
 
 // 创建 element 类型
-function mountElement(vnode: any, container: any) {
+function mountElement(vnode: any, container: any, parentComponent) {
   const el = (vnode.el = document.createElement(vnode.type))
   // console.log("mountElement");
 
@@ -66,7 +66,7 @@ function mountElement(vnode: any, container: any) {
     // 遍历 children 的每一个节点
     children.forEach(v => {
       // 递归的 h
-      patch(v, el)
+      patch(v, el, parentComponent)
     });
   }
 
@@ -95,24 +95,24 @@ function mountElement(vnode: any, container: any) {
 }
 
 // 处理 Component 类型
-function processComponent(vnode: any, container: any) {
-  mountComponent(vnode, container)
+function processComponent(vnode: any, container: any, parentComponent) {
+  mountComponent(vnode, container, parentComponent)
 }
 
 // 挂载组件
-function mountComponent(initialVNode: any, container: any) {
+function mountComponent(initialVNode: any, container: any, parentComponent) {
 
   // 创建 Component instance 对象
-  const instance = createComponentInstance(initialVNode)
+  const instance = createComponentInstance(initialVNode, parentComponent)
 
   // 设置 instance 的属性
   setupComponent(instance)
 
   // 生命周期钩子
-  setupRenderEffect(instance, initialVNode, container)
+  setupRenderEffect(instance, initialVNode, container, parentComponent)
 }
 
-function setupRenderEffect(instance: any, initialVNode: any, container: any) {
+function setupRenderEffect(instance: any, initialVNode: any, container: any, parentComponent) {
 
   const { proxy } = instance
 
@@ -123,7 +123,7 @@ function setupRenderEffect(instance: any, initialVNode: any, container: any) {
   // vnode -> path
   // vnode -> element -> mountElement
 
-  patch(subTree, container)
+  patch(subTree, container, instance)
 
   // element -> mount
   initialVNode.el = subTree.el
@@ -131,9 +131,9 @@ function setupRenderEffect(instance: any, initialVNode: any, container: any) {
 }
 
 
-function mountChildren(vnode: any, container: any) {
+function mountChildren(vnode: any, container: any, parentComponent) {
   vnode.children.forEach(v => {
-    patch(v, container)
+    patch(v, container, parentComponent)
   });
 }
 

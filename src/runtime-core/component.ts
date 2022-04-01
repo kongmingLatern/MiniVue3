@@ -6,12 +6,14 @@ import { initSlots } from './componentSlots';
 
 let currentInstance: any = null// 当前组件实例
 
-export function createComponentInstance(vnode: any) {
+export function createComponentInstance(vnode: any, parent) {
   const component = {
     vnode,
     type: vnode.type,
     setupState: {},
     slots: {},
+    parent,
+    provides: parent ? parent.provides : {}, // 一层层赋值
     emit: () => { }
   }
   // bind(null, object) => 可以让用户在之后的传参过程中只传入一个值即可
