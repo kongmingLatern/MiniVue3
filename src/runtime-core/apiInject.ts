@@ -22,7 +22,6 @@ export function provide(key, value) {
 export function inject(key, defaultValue) {
   // 取
   const currentInstance = getCurrentInstance()
-  console.log(currentInstance);
 
   if (currentInstance) {
 
@@ -33,7 +32,6 @@ export function inject(key, defaultValue) {
       return parentProvides[key]
     } else if (defaultValue) {
       if (typeof defaultValue === "function") {
-        console.log(defaultValue);
         return defaultValue()
       }
       return defaultValue
