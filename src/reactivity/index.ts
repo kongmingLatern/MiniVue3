@@ -1,5 +1,5 @@
 export { isObject } from '../shared/index';
-export { ref, isRef } from './ref';
+export { ref, isRef, proxyRefs } from './ref';
 export {
   reactive,
   readonly,

@@ -3,6 +3,7 @@ import { PublicInstanceProxyHandlers } from './componentPublicInstance';
 import { shalldowReadonly } from '../reactivity/reactive';
 import { emit } from './componentEmit';
 import { initSlots } from './componentSlots';
+import { proxyRefs } from '../reactivity/ref';
 
 let currentInstance: any = null// 当前组件实例
 
@@ -13,7 +14,9 @@ export function createComponentInstance(vnode: any, parent) {
     setupState: {},
     slots: {},
     parent,
-    provides: parent ? parent.provides : {}, // 一层层赋值
+    provides: parent ? parent.provides : {}, // 一层层赋值,
+    isMounted: false,
+    subTree: {},
     emit: () => { }
   }
   // bind(null, object) => 可以让用户在之后的传参过程中只传入一个值即可
@@ -58,7 +61,7 @@ function setupStatefulComponent(instance: any) {
 function handleSetupResult(instance: any, setupResult: any) {
   // TODO: function
   if (typeof setupResult === "object") {
-    instance.setupState = setupResult
+    instance.setupState = proxyRefs(setupResult)
   }
   finishComponentSetup(instance)
 }
