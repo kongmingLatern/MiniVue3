@@ -5,6 +5,7 @@ import { createAppAPI } from './createApp';
 import { effect } from '../reactivity/effect';
 import { EMPTY_OBJ } from "../shared";
 import { shouldUpdateComponent } from "./componentUpdateUtils";
+import { queueJobs } from "./scheduler";
 
 export function createRenderer(options) {
   const {
@@ -386,6 +387,11 @@ export function createRenderer(options) {
         // initialVNode.el = subTree.el
       }
 
+    }, {
+      scheduler() {
+        console.log('update--scheduler');
+        queueJobs(instance.update)
+      }
     })
 
   }
