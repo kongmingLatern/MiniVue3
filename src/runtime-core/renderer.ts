@@ -4,6 +4,7 @@ import { Fragment, Text } from './vnode'
 import { createAppAPI } from './createApp';
 import { effect } from '../reactivity/effect';
 import { EMPTY_OBJ } from "../shared";
+import { shouldUpdateComponent } from "./componentUpdateUtils";
 
 export function createRenderer(options) {
   const {
@@ -68,9 +69,7 @@ export function createRenderer(options) {
   }
 
   function patchElement(n1, n2, container, parentComponent, anchor) {
-    console.log("调用 patchElement");
-    console.log("n1", n1);
-    console.log("n2", n2);
+    console.log("调用 patchElement");;
 
     const oldProps = n1.props || EMPTY_OBJ
     const newProps = n2.props || EMPTY_OBJ
@@ -116,10 +115,11 @@ export function createRenderer(options) {
       }
     }
   }
-  function patchKeyedChildren(c1, c2, container, parentComponent, parentAnchor) {
+  function patchKeyedChildren(c1: any[], c2: any[], container, parentComponent, parentAnchor) {
     let i = 0
+    const l2 = c2.length
     let e1 = c1.length - 1
-    let e2 = c2.length - 1
+    let e2 = l2 - 1
 
     function isSomeVNodeType(n1, n2,) {
       // type 和 key
@@ -176,6 +176,12 @@ export function createRenderer(options) {
       const toBePatched = e2 - s2 + 1
       let patched = 0
       const keyToNewIndexMap = new Map()
+      const newIndexToOldIndexMap = new Array(toBePatched)
+      let moved = false // 是否需要移动
+      let maxNewIndexSoFar = 0
+      for (let i = 0; i < toBePatched; i++) {
+        newIndexToOldIndexMap[i] = 0 // 值为0说明没有映射关系
+      }
 
       for (let i = s2; i <= e2; i++) {
         const nextChild = c2[i]
@@ -195,7 +201,7 @@ export function createRenderer(options) {
         if (prevChild.key != null) {
           newIndex = keyToNewIndexMap.get(prevChild.key)
         } else {
-          for (let j = s2; j < e2; j++) {
+          for (let j = s2; j <= e2; j++) {
             if (isSomeVNodeType(prevChild, c2[j])) {
               newIndex = j
               break
@@ -205,10 +211,39 @@ export function createRenderer(options) {
         if (newIndex === undefined) {
           hostRemove(prevChild.el)
         } else {
+          if (newIndex >= maxNewIndexSoFar) {
+            maxNewIndexSoFar = newIndex
+          } else {
+            moved = true
+          }
+          newIndexToOldIndexMap[newIndex - s2] = i + 1
           patch(prevChild, c2[newIndex], container, parentComponent, null)
           patched++
         }
       }
+      // 最长递增
+      const increasingNewIndexSequence = moved
+        ? getSequence(newIndexToOldIndexMap)
+        : []
+      let j = increasingNewIndexSequence.length - 1
+
+      for (let i = toBePatched; i >= 0; i--) {
+        const nextIndex = i + s2
+        const nextChild = c2[nextIndex]
+        const anchor = nextIndex + 1 < l2 ? c2[nextIndex + 1].el : null
+        if (newIndexToOldIndexMap[i] === 0) {
+          patch(null, nextChild, container, parentComponent, anchor)
+        } else if (moved) {
+          if (j < 0 || i !== increasingNewIndexSequence[j]) {
+            console.log('移动元素');
+            hostInsert(nextChild.el, container, anchor)
+          } else {
+            j--
+          }
+        }
+
+      }
+
     }
   }
 
@@ -276,14 +311,32 @@ export function createRenderer(options) {
 
   // 处理 Component 类型
   function processComponent(n1, n2: any, container: any, parentComponent, anchor) {
-    mountComponent(n2, container, parentComponent, anchor)
+    if (!n1) {
+      mountComponent(n2, container, parentComponent, anchor)
+    } else {
+      updateComponent(n1, n2)
+    }
+  }
+
+  function updateComponent(n1, n2) {
+    // 去调用当前的 renderer
+    const instance = n2.component = n1.component
+    // 判断 n1 和 n2 是否相等
+    if (shouldUpdateComponent(n1, n2)) {
+      instance.next = n2
+      instance.update()
+    } else {
+      n2.el = n1.el
+      n2.vnode = n2
+    }
+
   }
 
   // 挂载组件
   function mountComponent(initialVNode: any, container: any, parentComponent, anchor) {
 
     // 创建 Component instance 对象
-    const instance = createComponentInstance(initialVNode, parentComponent)
+    const instance = (initialVNode.component = createComponentInstance(initialVNode, parentComponent))
 
     // 设置 instance 的属性
     setupComponent(instance)
@@ -294,7 +347,7 @@ export function createRenderer(options) {
 
   function setupRenderEffect(instance: any, initialVNode: any, container: any, parentComponent, anchor) {
     // 收集依赖
-    effect(() => {
+    instance.update = effect(() => {
       if (!instance.isMounted) {
 
         const { proxy } = instance
@@ -313,7 +366,13 @@ export function createRenderer(options) {
 
         instance.isMounted = true
       } else {
-
+        console.log('更新');
+        // 需要一个 vnode
+        const { next, vnode } = instance
+        if (next) {
+          next.el = vnode.el
+          updateComponentPreRender(instance, next)
+        }
         const { proxy } = instance
 
         // 获取 vnode (子组件)
@@ -335,4 +394,60 @@ export function createRenderer(options) {
     createApp: createAppAPI(render)
   }
 }
+/**
+ * 更新当前组件
+ * @param instance 当前组件实例
+ * @param nextVNode 更新后新的虚拟结点
+ */
+function updateComponentPreRender(instance, nextVNode) {
+  instance.vnode = nextVNode;
+  instance.next = null
+  // 更新props
+  instance.props = nextVNode.props
+}
 
+/**
+ * 最长递增子序列
+ * @param arr 数组
+ * @returns 返回下标数组
+ */
+function getSequence(arr: number[]): number[] {
+  const p = arr.slice();
+  const result = [0];
+  let i, j, u, v, c;
+  const len = arr.length;
+  for (i = 0; i < len; i++) {
+    const arrI = arr[i];
+    if (arrI !== 0) {
+      j = result[result.length - 1];
+      if (arr[j] < arrI) {
+        p[i] = j;
+        result.push(i);
+        continue;
+      }
+      u = 0;
+      v = result.length - 1;
+      while (u < v) {
+        c = (u + v) >> 1;
+        if (arr[result[c]] < arrI) {
+          u = c + 1;
+        } else {
+          v = c;
+        }
+      }
+      if (arrI < arr[result[u]]) {
+        if (u > 0) {
+          p[i] = result[u - 1];
+        }
+        result[u] = i;
+      }
+    }
+  }
+  u = result.length;
+  v = result[u - 1];
+  while (u-- > 0) {
+    result[u] = v;
+    v = p[v];
+  }
+  return result;
+}

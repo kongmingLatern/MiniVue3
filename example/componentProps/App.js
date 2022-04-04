@@ -1,8 +1,8 @@
 import { h } from '../../lib/guide-mini-vue.esm.js'
 window.self = null
 export const App = {
+  name: "App",
   render() {
-    name: "App"
     window.self = this
     return h(
       "div",
