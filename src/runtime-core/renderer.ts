@@ -354,7 +354,7 @@ export function createRenderer(options) {
         const { proxy } = instance
 
         // 获取 vnode (子组件)
-        const subTree = (instance.subTree = instance.render.call(proxy))
+        const subTree = (instance.subTree = instance.render.call(proxy, proxy))
 
         // vnode 树
         // vnode -> path
@@ -377,7 +377,7 @@ export function createRenderer(options) {
         const { proxy } = instance
 
         // 获取 vnode (子组件)
-        const subTree = instance.render.call(proxy)
+        const subTree = instance.render.call(proxy, proxy)
         const prevSubTree = instance.subTree
         instance.subTree = subTree
 
