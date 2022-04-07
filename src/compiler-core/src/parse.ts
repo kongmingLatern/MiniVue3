@@ -35,7 +35,7 @@ function parseChildren(context, ancestors) {
   return nodes
 }
 
-function isEnd(context: any, ancestors): boolean {
+function isEnd(context: any, ancestors: string | any[]): boolean {
   // 2. 遇到结束标签的时候
   const s = context.source
   // if (parentTag && s.startsWith(`</${parentTag}>`)) {
@@ -47,7 +47,6 @@ function isEnd(context: any, ancestors): boolean {
       if (startsWithEndTagOpen(s, tag)) {
         return true
       }
-
     }
   }
   // 1. context.source 有值的时候
@@ -88,7 +87,7 @@ function parseTextData(context: any, length) {
 function parseElement(context: any, ancestors: any[]) {
   // 1. 解析 tag -> 正则
   const element: any = parseTag(context, TagType.Start)
-  console.log("ancestors", ancestors);
+  // console.log("ancestors", ancestors);
 
   ancestors.push(element)
   element.children = parseChildren(context, ancestors)
@@ -104,6 +103,7 @@ function parseElement(context: any, ancestors: any[]) {
 }
 
 function parseTag(context: any, type: TagType) {
+  // 通过正则匹配标签 <div></div> -> match[1] -> div
   const match: any = /^<\/?([a-z]*)/i.exec(context.source)
   const tag = match[1]
   advanceBy(context, match[0].length)
@@ -158,7 +158,8 @@ function advanceBy(context: any, length: number) {
 
 function createRoot(children) {
   return {
-    children
+    children,
+    type: NodeTypes.ROOT
   }
 }
 
