@@ -11,7 +11,7 @@ vue2 通过`Object.defineProperty` API来实现数据的响应式\
 + **不能监听对象属性**新增和删除
 + 初始化阶段递归执行``Object.defineProperty``**性能负担大**
 
-~~~html
+~~~**html**
 <template>
   <div>
       <button @click="random">改变 msg 的值</button>
@@ -238,6 +238,17 @@ function track(target: any, key: any) {
   }
   // 已经获取到了依赖，将他收集起来即可
   depsMap.add(activeEffect)
+}
+
+function trigger(target, key) {
+  // 触发依赖
+  let targetMap = bucket.get(target)
+
+  let depsMap = targetMap.get(key)
+  
+  for(const dep of targetMap[key]) {
+    dep()
+  }
 }
 
 function effect(fn: any) {
