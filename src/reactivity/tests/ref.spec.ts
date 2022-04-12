@@ -67,7 +67,8 @@ describe('ref', () => {
   it('proxyRefs', () => {
     const user = {
       age: ref(10),
-      name: "小红"
+      name: "小红",
+      score: 10
     }
     const proxyUser = proxyRefs(user)
     // 触发 get -> 如果是一个 ref -> .value 否则 -> 本身

@@ -116,6 +116,8 @@ if (isObject(res)) {
 + 触发 get
 + 执行 track
 + 把 effect 收集起来作为依赖
++ 触发 set
++ 执行 trigger
 
 我们先用 ``jest`` 来编写我们期望的 ``effect`` 函数
 

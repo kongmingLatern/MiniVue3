@@ -1,15 +1,20 @@
 # VNode
+
 例如执行一段代码：
+
 ~~~js
   const rootContainer = document.querySelector("#app")
   createApp(App).mount(rootContainer)
 ~~~
-1.App 
+
+1.App
+
 ~~~js
   return h("div", { id: "root" },"hi")
 ~~~
 
 2.createApp.ts
+
 ~~~ts
 createApp {
   mount() {
@@ -21,12 +26,15 @@ createApp {
   }
 }
 ~~~
+
 3. renderer.ts
+
 ~~~ts
   patch(vnode, container)
 ~~~
 
 通过判断 ``vnode.type`` 类型来判断渲染的是一个 ``元素``还是一个``组件``
+
 ~~~ts
 // 组件 -> Object
 vnode.type = {
@@ -45,20 +53,27 @@ else if isObject(vnode.type)
 ~~~
 
 如果是组件，则进行处理，处理过程如下：
+
 + 创建 Component instance 对象
-  + ~~~ts
+
+   ~~~ts
     const instance = createComponentInstance(initialVNode)
-    ~~~
+  ~~~
+
 + 给 instance 设置 **属性**
-  + ~~~ts
+
+  ~~~ts
     setupComponent(instance)
-    ~~~
+  ~~~
+
 + 触发各种各样的依赖钩子函数
-  + ~~~ts
+
+   ~~~ts
     setupRenderEffect(instance, initialVNode, container)
     ~~~
 
 component.ts
+
 ~~~ts
 createComponentInstance()
 

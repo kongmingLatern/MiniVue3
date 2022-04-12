@@ -1,11 +1,11 @@
 import { isTracking, trackEffects, triggerEffects } from './effect';
 import { hasChanged, isObject } from '../shared/index';
-import { reactive, ReactiveFlags } from './reactive';
+import { reactive } from './reactive';
 
 
 class RefImp {
   private _value: any;
-  public dep: Set<unknown>;
+  public dep: Set<any>;
   public __v_isRef = true
   private _rawValue: any;
 

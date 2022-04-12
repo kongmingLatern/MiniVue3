@@ -88,10 +88,10 @@ export function isTracking() {
 export function trigger(target: any, key: any) {
   // 取出 desMap 中的所有的 target
   let depsMap = bucket.get(target)
-  // if (!depsMap) {
-  //   // 若不存在依赖，直接返回
-  //   return
-  // }
+  if (!depsMap) {
+    // 若不存在依赖，直接返回
+    return
+  }
   // 若存在，则取出对应的字段中依赖并执行 user.key => fn()
   let dep = depsMap.get(key)
   // 遍历所有依赖
@@ -114,7 +114,7 @@ export function stop(runner) {
 
 export function effect(fn: any, options: any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler)
-  extend(_effect, options)
+  extend(_effect, options) // Object.assign => 克隆 options 属性到 _effect 上
   _effect.run()
 
   const runner: any = _effect.run.bind(_effect)
