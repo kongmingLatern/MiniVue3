@@ -40,7 +40,7 @@ export const App = {
   },
   setup() {
     // Composition API
-	return {
+ return {
         msg: "mini-vue"
     }
   }
@@ -78,11 +78,9 @@ export function createApp(rootComponent) {
 
 其实【**渲染组件**】的本质上 我们做的是把一个一个 ``Component``  **经过不断的拆箱**最后变为 一个个 ``Element`` 类型的过程。
 
-
-
 **渲染时候的一些问题：**
 
-1. 如何区分 ``vnode`` 是一个 ``element`` 类型 还是一个 ``component `` 类型 呢？
+1. 如何区分 ``vnode`` 是一个 ``element`` 类型 还是一个 ``component`` 类型 呢？
 
 > 答：可以通过 **vnode.type** 来区分
 >
@@ -141,10 +139,6 @@ function processComponent(vnode, container) {
 
 ~~~
 
-
-
 2. 当渲染 ``vnode.children`` 时如果遇到数组需要怎么操作？
 
 > 答：递归调用 ``patch`` ，通过 ``patch`` 去**判断**数组中的元素是一个组件还是一个元素
-
-~~~ts
