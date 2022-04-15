@@ -96,7 +96,9 @@ setupComponent()  // 设置属性
       // 取出 setup() 函数
       const { setup } = Component
 
+      // 判断组件中是否存在 setup 函数
       if(setup) {
+        // 执行 setup() 函数
         const setupResult = setup()
          [setupResult] = 
          {
