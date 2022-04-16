@@ -11,18 +11,20 @@ export const App = {
         class: ["red", "fz-16"]
       },
       // children -> array
-      [
-        h("p", { class: "fz-16" }, "hi"),
-        h("p", { class: "blue" }, "blue")
-      ]
-    )
-    // // children -> string
-    // "hi, mini-vue " + this.src
-
+    //   [
+    //     h("p", { class: "fz-16" }, "hi"),
+    //     h("p", { class: "blue" }, "blue")
+    //   ]
     // )
+    // // children -> string
+    "hi, mini-vue " + this.src
+
+    )
   },
   setup() {
     // Composition API
-
+    return {
+      src: '123'
+    }
   }
 }

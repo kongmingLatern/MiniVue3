@@ -1,5 +1,5 @@
 const publicPropertiesMap = {
-  $el: (i: { vnode: { el: any } }) => i.vnode.el,
+  $el: (i: { vnode: { el: Element } }) => i.vnode.el,
   $slots: (i: { slots: any }) => i.slots,
   $props: (i: { props: any }) => i.props
 }

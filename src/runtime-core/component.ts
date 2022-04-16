@@ -49,6 +49,7 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component
 
   if (setup) {
+    // 设置当前对象为 instance
     setCurrentInstance(instance)
     const setupResult = setup(shalldowReadonly(instance.props), {
       emit: instance.emit
