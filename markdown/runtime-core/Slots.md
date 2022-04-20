@@ -7,20 +7,18 @@
 ~~~vue
 <!-- App 组件中 -->
 <template>
-	<slot name="header"></slot>
+ <slot name="header"></slot>
 </template>
 
 <!-- Foo 组件中 -->
 <template>
-	<App>
-    	<template #header>
-			自定义内容，该内容可以在 App 组件中看到哦~
-		</template>
+ <App>
+     <template #header>
+   自定义内容，该内容可以在 App 组件中看到哦~
+  </template>
     </App>
 </template>
 ~~~
-
-
 
 在本节中，我们会实现
 
@@ -45,7 +43,7 @@ export const App = {
         
         // 实现3：具名插槽
         // const foo = h(Foo, {}, {
-        //	header: h("div",{}, "header-container"),
+        // header: h("div",{}, "header-container"),
         //  footer: h("div",{}, "footer-container")
         // }) 
         
@@ -82,8 +80,8 @@ export const Foo = {
             renderSlots(this.$slots, "footer")
         })
     
-   		// 实现4：可传参的插槽
-    	return h("div",{}, {
+     // 实现4：可传参的插槽
+     return h("div",{}, {
             renderSlots(this.$slots, "header" + age),
             "foo",
             renderSlots(this.$slots, "footer")
@@ -110,7 +108,7 @@ const publicProertiesMap = {
 ~~~ts
 export function setupComponent(instance) {
     // 初始化 props
- 	initProps()
+  initProps()
     // 初始化 slots
     initSlots(instance,instance.vnode.chidren)
     ...
@@ -135,8 +133,6 @@ export function renderSlots(slots) {
 }
 ~~~
 
-
-
 ### 实现2 数组类型
 
 在实现之前可以思考一下为什么两个标签就不能渲染出结果呢？
@@ -160,7 +156,6 @@ export function initSlots(instance, children) {
 1. 把 children 变成 Object
 2. 通过 key -> value 来实现具名
 
-
 renderSlots.ts
 
 ~~~ts
@@ -168,7 +163,7 @@ export function renderSlots(slots, name) {
     const slot = slots[name]
     
     if(slot) {
-       	return createVNode("div", {}, slots)
+        return createVNode("div", {}, slots)
     }
 }
 ~~~
@@ -177,7 +172,7 @@ componentSlots.ts
 
 ~~~ts
 export function initSlots(instance, children) {
-	normalizeObjectSlots(children, instance.slots)
+ normalizeObjectSlots(children, instance.slots)
 }
 
 function normalizeObjectSlots(children, slots) {
@@ -192,9 +187,6 @@ function normalizeSlotValue(value) {
     return Array.isArray(value) ? value: [value]
 }
 ~~~
-
-
-
 
 ### 实现4：可传参数的插槽
 
@@ -225,4 +217,3 @@ function normalizeObjectSlots(children, slots) {
 }
 
 ~~~
-
