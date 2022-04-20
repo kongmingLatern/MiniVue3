@@ -11,8 +11,11 @@ export function provide(key, value) {
 
     // init
     if (provides === parentProvides) {
+
       // Object.create 函数表示 创建原型链
+      // 把 parentProvides 挂载到 currentInstance.provides 上
       provides = currentInstance.provides = Object.create(parentProvides)
+
     }
     provides[key] = value
 
