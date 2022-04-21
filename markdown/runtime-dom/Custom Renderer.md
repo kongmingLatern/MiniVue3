@@ -16,7 +16,6 @@
 
 ## 实现
 
-
 在 createApp.ts 中
 
 ~~~ts
@@ -119,8 +118,3 @@ export function createApp(...args) {
 // 注意，这里我们需要导出 runtime-core，因为在 runtime-dom 的层级高于 runtime-core，因此我们在 src/index.ts 中导出 runtime-dom 即可
 export * from '../runtime-core'
 ~~~
-
-
-
-
-
