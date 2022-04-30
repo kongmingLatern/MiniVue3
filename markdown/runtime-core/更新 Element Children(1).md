@@ -49,7 +49,7 @@ function patchChldren(n1, n2, container) {
     // 新的是 文本
     if(shapeFlag & ShapeFlags.TEXT_CHILDREN) {
         // 老的是 数组
-        if(prevFlag & ShapeFlag.ARRAY_CHILDREN) {
+        if(prevFlag & ShapeFlags.ARRAY_CHILDREN) {
             // 数组 => 文本
             // 删除老节点
             unmountChildren(n1.children)
@@ -101,7 +101,7 @@ function patchChldren(n1, n2, container) {
     // 新的是 文本
     if(shapeFlag & ShapeFlags.TEXT_CHILDREN) {
         // 老的是 数组
-        if(prevFlag & ShapeFlag.ARRAY_CHILDREN) {
+        if(prevFlag & ShapeFlags.ARRAY_CHILDREN) {
             // 数组 => 文本
             // 删除老节点
             unmountChildren(n1.children)
@@ -124,7 +124,7 @@ function patchChldren(n1, n2, container) {
 ~~~js
  if(shapeFlag & ShapeFlags.TEXT_CHILDREN) {
         // 老的是 数组
-        if(prevFlag & ShapeFlag.ARRAY_CHILDREN) {
+        if(prevFlag & ShapeFlags.ARRAY_CHILDREN) {
             // 数组 => 文本
             // 删除老节点
             unmountChildren(n1.children)
@@ -155,7 +155,7 @@ function patchChldren(n1, n2, container, parentComponent) {
     // 新的是 文本
     if(shapeFlag & ShapeFlags.TEXT_CHILDREN) {
         // 老的是 数组
-        if(prevFlag & ShapeFlag.ARRAY_CHILDREN) {
+        if(prevFlag & ShapeFlags.ARRAY_CHILDREN) {
             // 数组 => 文本
             // 删除老节点
             unmountChildren(n1.children)
