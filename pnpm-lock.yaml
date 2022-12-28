@@ -30,7 +30,10 @@ importers:
     specifiers: {}
 
   packages/reactivity:
-    specifiers: {}
+    specifiers:
+      '@mini-vue3/shared': workspace:^1.0.0
+    dependencies:
+      '@mini-vue3/shared': link:../shared
 
   packages/runtime-core:
     specifiers: {}
