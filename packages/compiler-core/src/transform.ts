@@ -1,6 +1,5 @@
-import { initProps } from '../../runtime-core/componentProps';
-import { NodeTypes } from './ast';
-import { TO_DISPLAY_STRING } from './runtimeHelpers';
+import { NodeTypes } from './ast'
+import { TO_DISPLAY_STRING } from './runtimeHelpers'
 /**
  * 增删改查节点
  * @param root 根节点
@@ -23,18 +22,20 @@ export function transform(root, options = {}) {
  * @param options 操作函数
  * @returns 初始化对象
  */
-function createTransformContext(root: any, options: any): any {
+function createTransformContext(
+  root: any,
+  options: any
+): any {
   const context = {
     root,
     nodeTransforms: options.nodeTransforms || [],
     helpers: new Map(),
     helper(key) {
       context.helpers.set(key, 1)
-    }
+    },
   }
   return context
 }
-
 
 /**
  * 遍历搜索
@@ -42,11 +43,10 @@ function createTransformContext(root: any, options: any): any {
  * @param context 插件函数
  */
 function traverseNode(node: any, context: any) {
-
   const nodeTransforms = context.nodeTransforms
   const exitFns: any = []
   for (let i = 0; i < nodeTransforms.length; i++) {
-    const transformFunction = nodeTransforms[i];
+    const transformFunction = nodeTransforms[i]
     const onExit = transformFunction(node, context)
     if (onExit) {
       exitFns.push(onExit)
@@ -56,12 +56,12 @@ function traverseNode(node: any, context: any) {
   switch (node.type) {
     case NodeTypes.INTERPOLATION:
       context.helper(TO_DISPLAY_STRING)
-      break;
+      break
     case NodeTypes.ROOT:
     case NodeTypes.ELEMENT:
       traverseChildren(node, context)
     default:
-      break;
+      break
   }
 
   let i = exitFns.length
@@ -69,7 +69,6 @@ function traverseNode(node: any, context: any) {
     exitFns[i]()
   }
 }
-
 
 /**
  * 深度遍历搜索
@@ -94,4 +93,3 @@ function createRootCodegen(root: any) {
     root.codegenNode = root.children[0]
   }
 }
-

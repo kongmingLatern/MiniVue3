@@ -27,7 +27,10 @@ importers:
       typescript: 4.9.4
 
   packages/compiler-core:
-    specifiers: {}
+    specifiers:
+      '@mini-vue3/shared': workspace:^1.0.0
+    dependencies:
+      '@mini-vue3/shared': link:../shared
 
   packages/reactivity:
     specifiers:
