@@ -21,7 +21,7 @@ describe('shalldowReadonly', () => {
   })
 
   it('should call console.warn when set', () => {
-    console.warn = jest.fn()
+    console.warn = vi.fn()
     const user = shalldowReadonly({
       age: 10,
     })

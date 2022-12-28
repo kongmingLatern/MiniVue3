@@ -17,7 +17,7 @@ describe('computed', () => {
     const value = reactive({
       foo: 1,
     })
-    const getter = jest.fn(() => {
+    const getter = vi.fn(() => {
       return value.foo
     })
 

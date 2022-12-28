@@ -1,9 +1,9 @@
-import { reactive } from '../src/reactive';
-import { effect, stop } from '../src/effect';
+import { reactive } from '../src/reactive'
+import { effect, stop } from '../src/effect'
 describe('effect', () => {
   it('happy path', () => {
     const user = reactive({
-      age: 10
+      age: 10,
     })
     let nextAge
     effect(() => {
@@ -13,34 +13,35 @@ describe('effect', () => {
 
     user.age++
     expect(nextAge).toBe(12)
-  });
+  })
 
   it('should return runner when call effect', () => {
     let foo = 10
     const runner = effect(() => {
       foo++
-      return "foo"
+      return 'foo'
     })
     expect(foo).toBe(11)
     const r = runner()
     expect(foo).toBe(12)
-    expect(r).toBe("foo")
-  });
+    expect(r).toBe('foo')
+  })
 
   it('scheduler', () => {
     let dummy
     let run: any
-    const scheduler = jest.fn(() => {
-      run = runner;
+    const scheduler = vi.fn(() => {
+      run = runner
     })
 
     const obj = reactive({
-      foo: 1
+      foo: 1,
     })
 
-    const runner = effect(() => {
-      dummy = obj.foo
-    },
+    const runner = effect(
+      () => {
+        dummy = obj.foo
+      },
       { scheduler }
     )
     expect(scheduler).not.toHaveBeenCalled()
@@ -58,12 +59,12 @@ describe('effect', () => {
 
     // should have run
     expect(dummy).toBe(2)
-  });
+  })
 
   it('stop', () => {
     let dummy
     const obj = reactive({
-      prop: 1
+      prop: 1,
     })
     const runner = effect(() => {
       dummy = obj.prop
@@ -82,24 +83,25 @@ describe('effect', () => {
     // stopped effect should still be manually callable
     runner()
     expect(dummy).toBe(4)
-
-  });
+  })
 
   it('onStop', () => {
     const obj = reactive({
-      foo: 1
+      foo: 1,
     })
-    const onStop = jest.fn()
+    const onStop = vi.fn()
 
     let dummy
 
-    const runner = effect(() => {
-      dummy = obj.foo
-    }, { onStop })
+    const runner = effect(
+      () => {
+        dummy = obj.foo
+      },
+      { onStop }
+    )
 
     stop(runner)
 
     expect(onStop).toBeCalledTimes(1)
-
-  });
-});
+  })
+})

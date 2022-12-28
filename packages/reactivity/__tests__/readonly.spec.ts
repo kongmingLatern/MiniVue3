@@ -20,7 +20,7 @@ describe('readonly', () => {
     // console.warn()
     // mock
 
-    console.warn = jest.fn()
+    console.warn = vi.fn()
 
     const user = readonly({
       age: 10,
