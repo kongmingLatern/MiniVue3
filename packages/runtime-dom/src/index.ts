@@ -1,4 +1,4 @@
-import { createRenderer } from '../runtime-core'
+import { createRenderer } from '@mini-vue3/runtime-core'
 
 function createElement(type) {
   return document.createElement(type)
@@ -18,8 +18,6 @@ function patchProp(el, key, prevVal, nextVal) {
       el.setAttribute(key, nextVal)
     }
   }
-
-
 }
 
 function insert(child, parent, anchor) {
@@ -43,11 +41,11 @@ const renderer: any = createRenderer({
   patchProp,
   insert,
   remove,
-  setElementText
+  setElementText,
 })
 
 export function createApp(...args) {
   return renderer.createApp(...args)
 }
 
-export * from '../runtime-core'
+export * from '@mini-vue3/runtime-core'

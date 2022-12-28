@@ -5,13 +5,14 @@ export const extend = Object.assign
 export const EMPTY_OBJ = {}
 
 export const isObject = (val: any) => {
-  return val !== null && typeof val === "object"
-};
-export const isString = (val: any) => typeof val === "string";
+  return val !== null && typeof val === 'object'
+}
+export const isString = (val: any) =>
+  typeof val === 'string'
 
 export const hasChanged = (oldVal: any, newVal: any) => {
   return !Object.is(oldVal, newVal)
-};
+}
 
 // add -> Add
 const capitalize = (str: string) => {
@@ -20,12 +21,14 @@ const capitalize = (str: string) => {
 
 // Add -> onAdd
 export const toHandlerKey = (str: string) => {
-  return str ? "on" + capitalize(str) : ""
+  return str ? 'on' + capitalize(str) : ''
 }
 
 // add-foo -> addFoo
 export const camelize = (str: string) => {
   return str.replace(/-(\w)/g, (_, char: string) => {
-    return char ? char.toUpperCase() : ""
+    return char ? char.toUpperCase() : ''
   })
 }
+
+export * from './ShapeFlags'

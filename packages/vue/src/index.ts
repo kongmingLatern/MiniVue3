@@ -1,9 +1,9 @@
 // mini-vue 出口
-export * from './runtime-dom'
-export * from './reactivity'
-import { baseCompile } from './compiler-core/src/compile';
-import * as runtimeDom from './runtime-dom'
-import { registerRuntimeCompiler } from './runtime-core/component';
+export * from '@mini-vue3/runtime-dom'
+export * from '@mini-vue3/reactivity'
+import { baseCompile } from '@mini-vue3/compiler-core';
+import * as runtimeDom from '@mini-vue3/runtime-dom'
+import { registerRuntimeCompiler } from '@mini-vue3/runtime-core';
 
 function compileToFunction(template) {
   const { code } = baseCompile(template)

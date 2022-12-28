@@ -1,4 +1,8 @@
-import { readonly, isReadonly, isProxy } from '../reactive';
+import {
+  readonly,
+  isReadonly,
+  isProxy,
+} from '../src/reactive'
 describe('readonly', () => {
   it('happy path', () => {
     const original = { foo: 1, bar: { baz: 2 } }
@@ -10,7 +14,7 @@ describe('readonly', () => {
     expect(isReadonly(original.bar)).toBe(false)
     expect(isProxy(original)).toBe(false)
     expect(isProxy(wrapped)).toBe(true)
-  });
+  })
 
   it('warn then call set', () => {
     // console.warn()
@@ -19,11 +23,11 @@ describe('readonly', () => {
     console.warn = jest.fn()
 
     const user = readonly({
-      age: 10
+      age: 10,
     })
     user.age = 11
 
     // 是否调用了这个函数
     expect(console.warn).toBeCalled()
-  });
-});
+  })
+})

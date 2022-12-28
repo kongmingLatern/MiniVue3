@@ -8,5 +8,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@mini-vue3/runtime-core": "workspace:^1.0.0"
+  }
 }

@@ -1,13 +1,18 @@
-import { initProps } from './componentProps';
-import { PublicInstanceProxyHandlers } from './componentPublicInstance';
-import { shalldowReadonly } from '../reactivity/reactive';
-import { emit } from './componentEmit';
-import { initSlots } from './componentSlots';
-import { proxyRefs } from '../reactivity/ref';
+import { initProps } from './componentProps'
+import { PublicInstanceProxyHandlers } from './componentPublicInstance'
+import {
+  shalldowReadonly,
+  proxyRefs,
+} from '@mini-vue3/reactivity'
+import { emit } from './componentEmit'
+import { initSlots } from './componentSlots'
 
-let currentInstance: any = null// 当前组件实例
+let currentInstance: any = null // 当前组件实例
 
-export function createComponentInstance(vnode: any, parent) {
+export function createComponentInstance(
+  vnode: any,
+  parent
+) {
   const component = {
     vnode,
     type: vnode.type,
@@ -17,14 +22,20 @@ export function createComponentInstance(vnode: any, parent) {
     provides: parent ? parent.provides : {}, // 一层层赋值,
     isMounted: false,
     subTree: {},
-    emit: () => { }
+    emit: () => {},
   }
   // bind(null, object) => 可以让用户在之后的传参过程中只传入一个值即可
   component.emit = emit.bind(null, component) as any
   return component
-};
+}
 
-export function setupComponent(instance: { vnode: any; type?: any; setupState?: {}; slots?: {}; emit?: () => void; }) {
+export function setupComponent(instance: {
+  vnode: any
+  type?: any
+  setupState?: {}
+  slots?: {}
+  emit?: () => void
+}) {
   // TODO:
   // 1.初始化 props
   initProps(instance, instance.vnode.props)
@@ -37,13 +48,15 @@ export function setupComponent(instance: { vnode: any; type?: any; setupState?: 
   // 4.设置 render() 函数
 
   setupStatefulComponent(instance)
-};
+}
 
 function setupStatefulComponent(instance: any) {
-
   const Component = instance.type
 
-  instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers)
+  instance.proxy = new Proxy(
+    { _: instance },
+    PublicInstanceProxyHandlers
+  )
 
   // 3.调用 setup()
   const { setup } = Component
@@ -51,17 +64,23 @@ function setupStatefulComponent(instance: any) {
   if (setup) {
     // 设置当前对象为 instance
     setCurrentInstance(instance)
-    const setupResult = setup(shalldowReadonly(instance.props), {
-      emit: instance.emit
-    }) // setup() return 的值
+    const setupResult = setup(
+      shalldowReadonly(instance.props),
+      {
+        emit: instance.emit,
+      }
+    ) // setup() return 的值
     setCurrentInstance(null)
     handleSetupResult(instance, setupResult)
   }
 }
 
-function handleSetupResult(instance: any, setupResult: any) {
+function handleSetupResult(
+  instance: any,
+  setupResult: any
+) {
   // TODO: function
-  if (typeof setupResult === "object") {
+  if (typeof setupResult === 'object') {
     instance.setupState = proxyRefs(setupResult)
   }
   finishComponentSetup(instance)
@@ -76,7 +95,6 @@ function finishComponentSetup(instance: any) {
   }
   // 4.设置 render() 函数
   instance.render = Component.render
-
 }
 
 export function getCurrentInstance() {

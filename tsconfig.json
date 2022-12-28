@@ -13,5 +13,6 @@
     "paths": {
       "@mini-vue3/*": ["./packages/*/src"]
     }
-  }
+  },
+  "include": ["packages/*/src", "packages/*/__tests__"]
 }

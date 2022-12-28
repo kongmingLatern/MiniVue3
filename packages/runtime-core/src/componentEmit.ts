@@ -1,4 +1,4 @@
-import { camelize, toHandlerKey } from "../shared/index"
+import { camelize, toHandlerKey } from '@mini-vue3/shared'
 
 export function emit(instance, event: string) {
   // console.log("event", event); add
@@ -13,5 +13,4 @@ export function emit(instance, event: string) {
 
   // 如果 handler 存在就调用
   handler && handler()
-
 }

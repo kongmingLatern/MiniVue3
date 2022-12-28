@@ -39,16 +39,33 @@ importers:
       '@mini-vue3/shared': link:../shared
 
   packages/runtime-core:
-    specifiers: {}
+    specifiers:
+      '@mini-vue3/reactivity': workspace:^1.0.0
+      '@mini-vue3/shared': workspace:^1.0.0
+    dependencies:
+      '@mini-vue3/reactivity': link:../reactivity
+      '@mini-vue3/shared': link:../shared
 
   packages/runtime-dom:
-    specifiers: {}
+    specifiers:
+      '@mini-vue3/runtime-core': workspace:^1.0.0
+    dependencies:
+      '@mini-vue3/runtime-core': link:../runtime-core
 
   packages/shared:
     specifiers: {}
 
   packages/vue:
-    specifiers: {}
+    specifiers:
+      '@mini-vue3/compiler-core': workspace:^1.0.0
+      '@mini-vue3/reactivity': workspace:^1.0.0
+      '@mini-vue3/runtime-core': workspace:^1.0.0
+      '@mini-vue3/runtime-dom': workspace:^1.0.0
+    dependencies:
+      '@mini-vue3/compiler-core': link:../compiler-core
+      '@mini-vue3/reactivity': link:../reactivity
+      '@mini-vue3/runtime-core': link:../runtime-core
+      '@mini-vue3/runtime-dom': link:../runtime-dom
 
 packages:
 
