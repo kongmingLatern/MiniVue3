@@ -3,7 +3,7 @@ import {
   trackEffects,
   triggerEffects,
 } from './effect'
-import { hasChanged, isObject } from '../shared/src/index'
+import { hasChanged, isObject } from '@mini-vue3/shared'
 import { reactive } from './reactive'
 
 class RefImp {

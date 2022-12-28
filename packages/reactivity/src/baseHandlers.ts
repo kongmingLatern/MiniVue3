@@ -4,8 +4,7 @@ import {
   reactive,
   readonly,
 } from './reactive'
-import { isObject } from '@mini-vue3/shared'
-import { extend } from '../../shared/src/index'
+import { isObject, extend } from '@mini-vue3/shared'
 
 const get = createGetter()
 const set = createSetter()

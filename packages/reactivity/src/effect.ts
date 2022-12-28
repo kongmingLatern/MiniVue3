@@ -1,4 +1,4 @@
-import { extend } from '../shared/src/index'
+import { extend } from '@mini-vue3/shared'
 let activeEffect: any
 let shouldTrack: any
 const bucket = new Map() // 存放所有依赖的Map
