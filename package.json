@@ -1,5 +1,5 @@
 {
-  "name": "vue3",
+  "name": "mini-vue3",
   "version": "1.0.0",
   "main": "lib/guide-mini-vue.cjs.js",
   "module": "lib/guide-mini-vue.esm.js",
